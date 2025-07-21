@@ -1,0 +1,25 @@
+# Entorno virtual
+venv/
+
+# Archivos de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Archivos de pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Screenshots y reportes
+reports/
+screenshots/
+
+# Archivos del sistema
+.DS_Store
+.vscode/
+.idea/
+
+# Variables de entorno
+.env
