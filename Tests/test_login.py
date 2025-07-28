@@ -2,19 +2,22 @@ from playwright.sync_api import Page, expect
 from Pages.LoginPage import LoginPage
 import os
 from dotenv import load_dotenv
+from Funciones import Funcion
 
 load_dotenv()
 
+
 def test_login_exitoso(page):
     """Test para verificar un login exitoso con credenciales válidas"""
-    login_page = LoginPage(page)      
+    login_page = LoginPage(page)  
+
     login_page.ir_a_login()       
     login_page.verificar_url_login()      
     login_page.verificar_titulo()
     
     email = os.getenv('EMAIL_VALIDO')
     password = os.getenv('PASSWORD_VALIDO')
-    login_page.hacer_login_completo(email, password)  
+    login_page.hacer_login_completo(email, password)
     
 def test_login_incorrecto(page):
     """Test para verificar que el login falla con credenciales incorrectas"""

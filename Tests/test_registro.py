@@ -46,4 +46,4 @@ def test_registro_exitoso(page: Page):
     
     funcion.click_boton(boton_registro)
     funcion.validar_elemento_visible(mensaje_exito)
-    funcion.validar_url(URL_LOGIN)
+    funcion.validar_url(URL_LOGIN)  
