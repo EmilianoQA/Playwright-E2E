@@ -1,1 +1,0 @@
-Screenshot guardado en: login_exitoso/<Page url='http://localhost:3000/dashboard'>.png

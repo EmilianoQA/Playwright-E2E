@@ -23,3 +23,38 @@ screenshots/
 
 # Variables de entorno
 .env
+
+# Archivos de configuración de Playwright
+.allure-results/cat > .gitignore << 'EOF'
+# Entorno virtual
+venv/
+
+# Archivos de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Archivos de pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Screenshots y reportes
+reports/
+screenshots/
+trace.zip
+
+# Archivos del sistema
+.DS_Store
+.vscode/
+.idea/
+
+# Variables de entorno
+.env
+
+# Archivos de Allure y Playwright
+allure-results/
+playwright-report/
+test-results/
+EOF
