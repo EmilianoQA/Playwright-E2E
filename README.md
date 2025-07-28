@@ -1,6 +1,6 @@
 # Playwright + pytest Automation
 
-Proyecto de automatización de pruebas usando Playwright con pytest.
+Proyecto de automatización de pruebas usando Playwright con pytest y reportes con Allure.
 
 ## Setup
 ```bash
@@ -11,43 +11,100 @@ python -m venv venv
 source venv/bin/activate
 
 # Instalar dependencias
-pip install pytest playwright
+pip install pytest playwright allure-pytest python-dotenv
 
 # Instalar navegador
 playwright install chromium
+
+# Instalar Allure CLI (para reportes)
+brew install allure
 ```
 
 ## Estructura del Proyecto
 ```
-proyecto_playwright/
-├── conftest.py              # Configuración de fixtures para pytest
-├── test_mi_primer_test.py   # Test básico de pytest
-├── test_playwright_basico.py # Test básico con Playwright
-├── test_login.py            # Test de login para aplicación local
-├── requirements.txt         # Dependencias del proyecto
-├── .gitignore              # Archivos a ignorar en Git
-└── README.md               # Este archivo
+playwright_E2E/
+├── Pages/
+│   ├── LoginPage.py         # Page Object para Login
+│   └── RegistroPage.py      # Page Object para Registro
+├── Tests/
+│   ├── test_registro_exitoso.py
+│   ├── test_registro_fallido.py
+│   └── ...
+├── Funciones.py             # Funciones base reutilizables
+├── conftest.py              # Configuración de fixtures
+├── pytest.ini              # Configuración de pytest y Allure
+├── .env                     # Variables de entorno
+├── test_login.py            # Tests de login
+└── README.md                # Este archivo
 ```
 
 ## Ejecutar Tests
 ```bash
-# Ejecutar todos los tests
+# Ejecutar todos los tests (con Allure configurado automáticamente)
 pytest
 
 # Ejecutar con más detalle
 pytest -v
 
+# Ejecutar por categorías
+pytest -m login        # Solo tests de login
+pytest -m registro     # Solo tests de registro  
+pytest -m smoke        # Solo smoke tests
+
 # Ejecutar test específico
-pytest test_login.py -v
+pytest Tests/test_login.py -v
 
-# Ejecutar con navegador visible y lento para debug
-pytest test_login.py --headed --slowmo 1000
+# Ejecutar con navegador visible
+pytest --headed
+```
 
-# Debug con Playwright Inspector (modo paso a paso)
-PWDEBUG=1 pytest test_login.py
+## Reportes con Allure
+```bash
+# 1. Ejecutar tests (genera datos en allure-results/)
+pytest
 
-# Ejecutar múltiples tests
-pytest test_playwright_basico.py test_login.py -v
+# 2. Generar y abrir reporte HTML
+allure serve allure-results
+
+# O generar reporte estático
+allure generate allure-results -o allure-report --clean
+allure open allure-report
+```
+
+## Reportes Nativos
+
+### pytest-html (Reporte nativo de pytest)
+```bash
+# Instalar
+pip install pytest-html
+
+# Generar reporte
+pytest --html=report.html --self-contained-html
+
+# Abrir report.html en navegador
+```
+
+### Playwright HTML Report (Reporte nativo de Playwright)
+```bash
+# Instalar
+pip install pytest-playwright
+
+# Generar reporte
+pytest --browser chromium --html=playwright-report.html
+
+# Abrir playwright-report.html en navegador
+```
+
+### Trace Viewer (Herramienta más potente de Playwright)
+```bash
+# Tu conftest.py ya genera traces automáticamente
+# Después de ejecutar cualquier test:
+pytest Tests/test_login.py
+
+# Ver trace paso a paso (interfaz interactiva)
+playwright show-trace trace.zip
+
+# Muestra: screenshots, network, código, timeline, etc.
 ```
 
 ## Debug y Desarrollo

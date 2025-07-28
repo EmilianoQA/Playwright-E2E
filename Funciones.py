@@ -1,4 +1,6 @@
 from playwright.sync_api import Page, expect
+import os
+from datetime import datetime
 
 class Funcion:
     def __init__(self, page: Page):
@@ -44,3 +46,17 @@ class Funcion:
         """Navegar a una URL y esperar que cargue"""
         self.page.goto(url)
         self.page.wait_for_load_state("networkidle")
+    
+    def capturar_pantalla(self, nombre_archivo: str, carpeta: str = "screenshots"):
+        """Capturar screenshot y guardarlo con nombre específico"""
+        # Crear carpeta si no existe
+        if not os.path.exists(carpeta):
+            os.makedirs(carpeta)
+        
+        # Sin timestamp - sobrescribe archivo anterior
+        nombre_completo = f"{nombre_archivo}.png"
+        ruta_completa = os.path.join(carpeta, nombre_completo)
+        
+        # Capturar screenshot
+        self.page.screenshot(path=ruta_completa)
+        print(f"Screenshot guardado en: {ruta_completa}")

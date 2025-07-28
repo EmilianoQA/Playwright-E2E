@@ -1,5 +1,23 @@
 import pytest
 from playwright.sync_api import sync_playwright, Playwright, Browser, Page
+import os
+
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    """Hook para capturar screenshot solo en fallos"""
+    outcome = yield
+    rep = outcome.get_result()
+    
+    # Si el test falló, tomar screenshot
+    if rep.when == "call" and rep.failed:
+        page = item.funcargs.get('page')
+        if page:
+            # Crear carpeta si no existe
+            if not os.path.exists('screenshots'):
+                os.makedirs('screenshots')
+            # Capturar screenshot del fallo
+            page.screenshot(path=f"screenshots/FAILED_{item.name}.png")
+            print(f"Screenshot de fallo guardado: screenshots/FAILED_{item.name}.png")
 
 @pytest.fixture(scope="session")  # Se ejecuta UNA VEZ por toda la sesión de testing
 def playwright():
