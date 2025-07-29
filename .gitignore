@@ -58,3 +58,8 @@ allure-results/
 playwright-report/
 test-results/
 EOF
+
+report.html
+trace.zip
+playwright-report/
+test-results/
