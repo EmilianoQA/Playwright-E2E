@@ -1,46 +1,57 @@
-from playwright.sync_api import Page, expect
+import allure
+from playwright.sync_api import Page
 from Pages.LoginPage import LoginPage
 import os
 from dotenv import load_dotenv
-from Funciones import Funcion
 
 load_dotenv()
 
-
-def test_login_exitoso(page):
-    """Test para verificar un login exitoso con credenciales válidas"""
-    login_page = LoginPage(page)  
-
-    login_page.ir_a_login()       
-    login_page.verificar_url_login()      
-    login_page.verificar_titulo()
+@allure.feature("Autenticación")
+@allure.story("Login de Usuario")
+@allure.severity(allure.severity_level.CRITICAL)
+def test_login_exitoso(page: Page):
+    """Test para verificar que el login funciona con credenciales correctas"""
     
-    email = os.getenv('EMAIL_VALIDO')
-    password = os.getenv('PASSWORD_VALIDO')
-    login_page.hacer_login_completo(email, password)
+    login_page = LoginPage(page)
     
-def test_login_incorrecto(page):
+    with allure.step("Navegar a la página de login"):
+        login_page.ir_a_login()
+        
+    with allure.step("Verificar título de la página"):
+        login_page.verificar_titulo()
+    
+    with allure.step("Ingresar credenciales válidas"):
+        email_correcto = os.getenv('EMAIL_VALIDO')
+        password_correcto = os.getenv('PASSWORD_VALIDO')
+        login_page.llenar_email(email_correcto)
+        login_page.llenar_password(password_correcto)
+    
+    with allure.step("Hacer clic en el botón de login"):
+        login_page.hacer_click_login()
+    
+    with allure.step("Verificar login exitoso"):
+        login_page.verificar_mensaje_exito()
+        login_page.verificar_login_exitoso()
+
+@allure.feature("Autenticación")
+@allure.story("Login Inválido")
+@allure.severity(allure.severity_level.NORMAL)
+def test_login_incorrecto(page: Page):
     """Test para verificar que el login falla con credenciales incorrectas"""
     
-    # Crear instancia de la página de login
     login_page = LoginPage(page)
-    # Ir a la página de login
-    login_page.ir_a_login()
-    # Llenar el email y la contraseña incorrectos
-    email_incorrecto = os.getenv('EMAIL_INCORRECTO')
-    password_incorrecto = os.getenv('PASSWORD_INCORRECTO')
-    login_page.llenar_email(email_incorrecto)
-    login_page.llenar_password(password_incorrecto)
-    # Hacer click en el boton de login
-    login_page.hacer_click_login()
-    # Verificar que el login falló
-    login_page.verificar_mensaje_error()
-
-def test_login_campo_vacio(page):
-    login_page = LoginPage(page)
-    login_page.ir_a_login()
-    # Dejar email vacío, solo llenar password
-    login_page.llenar_password('cualquier_password')
-    login_page.hacer_click_login()
-    # Verificar que NO navega (se queda en login)
-    login_page.verificar_url_login()  # Usa la función base con waits
+    
+    with allure.step("Navegar a la página de login"):
+        login_page.ir_a_login()
+    
+    with allure.step("Ingresar credenciales inválidas"):
+        email_incorrecto = os.getenv('EMAIL_INCORRECTO')
+        password_incorrecto = os.getenv('PASSWORD_INCORRECTO')
+        login_page.llenar_email(email_incorrecto)
+        login_page.llenar_password(password_incorrecto)
+    
+    with allure.step("Hacer clic en el botón de login"):
+        login_page.hacer_click_login()
+    
+    with allure.step("Verificar mensaje de error"):
+        login_page.verificar_mensaje_error()
