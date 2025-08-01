@@ -1,161 +1,141 @@
-# Playwright + pytest Automation
+# Playwright + pytest + Allure Automation
 
-Proyecto de automatización de pruebas usando Playwright con pytest y reportes con Allure.
-
-## Setup
-```bash
-# Crear entorno virtual
-python -m venv venv
-
-# Activar entorno virtual
-source venv/bin/activate
-
-# Instalar dependencias
-pip install pytest playwright allure-pytest python-dotenv
-
-# Instalar navegador
-playwright install chromium
-
-# Instalar Allure CLI (para reportes)
-brew install allure
-```
+Proyecto de automatización E2E usando Playwright con pytest y reportes profesionales con Allure.
 
 ## Estructura del Proyecto
+
 ```
 playwright_E2E/
 ├── Pages/
-│   ├── LoginPage.py         # Page Object para Login
-│   └── RegistroPage.py      # Page Object para Registro
+│   ├── LoginPage.py
+│   └── RegistroPage.py
 ├── Tests/
+│   ├── test_login.py
+│   ├── test_registro.py
 │   ├── test_registro_exitoso.py
-│   ├── test_registro_fallido.py
-│   └── ...
-├── Funciones.py             # Funciones base reutilizables
-├── conftest.py              # Configuración de fixtures
-├── pytest.ini              # Configuración de pytest y Allure
-├── .env                     # Variables de entorno
-├── test_login.py            # Tests de login
-└── README.md                # Este archivo
+│   └── test_registro_fallido.py
+├── Funciones.py
+├── conftest.py
+├── pytest.ini
+├── .env
+└── README.md
 ```
 
-## Ejecutar Tests
+## Setup
+
+### 1. Crear y activar entorno virtual
 ```bash
-# Ejecutar todos los tests (con Allure configurado automáticamente)
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### 2. Instalar dependencias
+```bash
+pip install pytest playwright python-dotenv allure-pytest
+```
+
+### 3. Instalar navegadores de Playwright
+```bash
+playwright install chromium
+```
+
+### 4. Instalar Allure (para reportes)
+```bash
+brew install allure
+```
+
+### 5. Configurar variables de entorno
+Crear archivo `.env` en la raíz del proyecto:
+```properties
+# URLs de la aplicación
+BASE_URL=http://localhost:3000
+
+# Credenciales de prueba
+EMAIL_VALIDO=usuario@test.com
+PASSWORD_VALIDO=password123
+
+# Credenciales incorrectas para tests negativos
+EMAIL_INCORRECTO=malo@test.com
+PASSWORD_INCORRECTO=wrongpass
+```
+
+## Ejecución de Tests
+
+### Comandos básicos
+```bash
+# Ejecutar todos los tests
 pytest
+
+# Ejecutar tests específicos
+pytest Tests/test_login.py
 
 # Ejecutar con más detalle
 pytest -v
 
-# Ejecutar por categorías
-pytest -m login        # Solo tests de login
-pytest -m registro     # Solo tests de registro  
-pytest -m smoke        # Solo smoke tests
-
-# Ejecutar test específico
-pytest Tests/test_login.py -v
-
-# Ejecutar con navegador visible
-pytest --headed
+# Ejecutar tests por categoría
+pytest -k "exitoso"
+pytest -k "fallido"
 ```
 
-## Reportes con Allure
+### Ver reportes de Allure
 ```bash
-# 1. Ejecutar tests (genera datos en allure-results/)
-pytest
+# Después de ejecutar tests
+allure serve allure-results
+```
 
-# 2. Generar y abrir reporte HTML
+### Ver traces de Playwright (para debugging)
+```bash
+playwright show-trace trace.zip
+```
+
+## Características
+
+### 🎯 Tests Implementados
+- **Login exitoso** con credenciales válidas
+- **Login fallido** con credenciales incorrectas
+- **Registro exitoso** con datos aleatorios
+- **Registro fallido** con email existente
+
+### 📊 Reportes Profesionales
+- **Allure Reports** con features, stories y steps
+- **Trace Viewer** de Playwright para debugging
+- **Screenshots** automáticos en fallos
+- **Timeline** detallado de ejecución
+
+### 🏗️ Arquitectura
+- **Page Object Model** para mantenibilidad
+- **Funciones reutilizables** centralizadas
+- **Variables de entorno** para configuración
+- **Fixtures** de pytest para setup/teardown
+
+### 🧪 Configuración Automatizada
+- **pytest.ini** configurado para ejecución simple
+- **Limpieza automática** de reportes anteriores
+- **Tracing habilitado** por defecto
+- **Markers** para categorización de tests
+
+## Comandos Útiles
+
+```bash
+# Desarrollo
+source .venv/bin/activate
+pytest -v
+
+# Reportes
 allure serve allure-results
 
-# O generar reporte estático
-allure generate allure-results -o allure-report --clean
-allure open allure-report
-```
-
-## Reportes Nativos
-
-### pytest-html (Reporte nativo de pytest)
-```bash
-# Instalar
-pip install pytest-html
-
-# Generar reporte
-pytest --html=report.html --self-contained-html
-
-# Abrir report.html en navegador
-```
-
-### Playwright HTML Report (Reporte nativo de Playwright)
-```bash
-# Instalar
-pip install pytest-playwright
-
-# Generar reporte
-pytest --browser chromium --html=playwright-report.html
-
-# Abrir playwright-report.html en navegador
-```
-
-### Trace Viewer (Herramienta más potente de Playwright)
-```bash
-# Tu conftest.py ya genera traces automáticamente
-# Después de ejecutar cualquier test:
-pytest Tests/test_login.py
-
-# Ver trace paso a paso (interfaz interactiva)
+# Debugging
 playwright show-trace trace.zip
 
-# Muestra: screenshots, network, código, timeline, etc.
+# Git
+git add .
+git commit -m "descripción"
+git push
 ```
 
-## Debug y Desarrollo
-```bash
-# Playwright Inspector - interfaz gráfica para debug paso a paso
-PWDEBUG=1 pytest nombre_del_test.py
+## Notas
 
-# Ejecutar con navegador visible
-pytest --headed
-
-# Reducir velocidad para observar
-pytest --slowmo 1000
-
-# Combinar opciones
-pytest test_login.py --headed --slowmo 1000 -v
-```
-
-## Trace Viewer (como UI Mode de JavaScript)
-Para generar traces, primero configura tu `conftest.py` con tracing habilitado:
-```python
-# En conftest.py, agregar en la fixture page:
-context.tracing.start(screenshots=True, snapshots=True, sources=True)
-# ... después del test ...
-context.tracing.stop(path="trace.zip")
-```
-
-Luego ejecutar y ver:
-```bash
-# 1. Ejecutar test (genera trace.zip automáticamente)
-pytest test_login.py -v
-
-# 2. Ver el trace en interfaz web
-playwright show-trace trace.zip
-```
-
-## Herramientas de Análisis
-```bash
-# Reportes HTML simples
-pip install pytest-html
-pytest --html=report.html --self-contained-html
-```
-
-## Workflow recomendado
-# 1. Desarrollar/debug con Inspector
-PWDEBUG=1 pytest test_registro_exitoso.py
-
-# 2. Ejecutar para generar trace
-pytest test_registro_exitoso.py -v
-
-# 3. Analizar resultados con Trace Viewer
-playwright show-trace trace.zip
-
-# Verificar sintaxis (rápido)
-python -m py_compile test_login.py
+- Los tests usan **datos aleatorios** para registros
+- **Allure** genera reportes automáticamente en cada ejecución
+- **Traces** se guardan en `trace.zip` para debugging
+- Las **variables de entorno** deben estar configuradas antes de ejecutar

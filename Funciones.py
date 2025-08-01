@@ -60,3 +60,15 @@ class Funcion:
         # Capturar screenshot
         self.page.screenshot(path=ruta_completa)
         print(f"Screenshot guardado en: {ruta_completa}")
+
+    def seleccionar_combo_box(self, selector_combo: str, opcion_texto: str):
+        """Seleccionar una opción de un combo box/dropdown"""
+        # Hacer clic en el combo box para abrirlo
+        self.page.locator(selector_combo).click()
+        # Seleccionar la opción por texto
+        self.page.get_by_role("option", name=opcion_texto).click()
+
+    def seleccionar_primera_opcion_combo(self, selector_combo: str):
+        """Seleccionar la primera opción de un combo box"""
+        self.page.locator(selector_combo).click()
+        self.page.get_by_role("option").first.click()

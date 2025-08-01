@@ -36,3 +36,4 @@ report.html
 trace.zip
 playwright-report/
 test-results/
+pytest.ini_viejo.txt
