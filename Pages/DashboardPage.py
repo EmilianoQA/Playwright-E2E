@@ -25,7 +25,7 @@ class DashboardPage:
         self.opcion_debito = 'role=option[name="Débito"]'
         self.input_monto = 'role=spinbutton[name="Monto inicial *"]'
         
-        # Selectores para eliminar cuenta (MOVER AQUÍ)
+        # Selectores para eliminar cuenta 
         self.boton_eliminar_cuenta = '[data-testid="boton-eliminar-cuenta"]'
         self.titulo_eliminar = 'role=heading[name="Eliminar cuenta"]'
         self.combo_seleccionar_cuenta = 'role=combobox[name="Selecciona cuenta"]'
@@ -42,11 +42,12 @@ class DashboardPage:
         self.funcion.validar_elemento_visible(self.combo_tipo_cuenta)
         self.funcion.validar_elemento_visible(self.input_monto)
         self.funcion.validar_elemento_visible(self.boton_crear_cuenta)
-
+    
     def seleccionar_tipo_cuenta(self, tipo: str = "Débito"):
-        """Seleccionar tipo de cuenta del dropdown usando la función de combo box"""
-        self.funcion.seleccionar_combo_box(self.combo_tipo_cuenta, tipo)
-
+        """Seleccionar tipo de cuenta """
+        self.funcion.seleccionar_combo_moderno(self.combo_tipo_cuenta, tipo)
+    
+    
     def ingresar_monto_inicial(self, monto: str):
         """Ingresar monto inicial en el campo"""
         self.funcion.click_boton(self.input_monto)

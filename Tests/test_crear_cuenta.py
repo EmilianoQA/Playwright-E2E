@@ -10,6 +10,8 @@ load_dotenv()
 @allure.feature("Gestión de Cuentas")
 @allure.story("Crear Nueva Cuenta")
 @allure.severity(allure.severity_level.CRITICAL)
+
+
 def test_crear_cuenta(page: Page):
     '''Crear una cuenta nueva y verificar que se genera correctamente'''
     
@@ -44,6 +46,8 @@ def test_crear_cuenta(page: Page):
 @allure.feature("Gestión de Cuentas")
 @allure.story("Eliminar Cuenta")
 @allure.severity(allure.severity_level.NORMAL)
+
+
 def test_eliminar_cuenta(page: Page):
     '''Eliminar una cuenta existente y verificar eliminación'''
     
@@ -70,18 +74,5 @@ def test_eliminar_cuenta(page: Page):
     
     with allure.step("Verificar que la cuenta se eliminó exitosamente"):
         dashboard_page.verificar_cuenta_eliminada()
-# Agregar una cuenta, haciendo click en el botón de "Agregar Cuenta"
 
-# Verificar que se abre el modal de agregar cuenta, con el texto Crear nueva cuenta
-# Desplegar el combo box de tipo de cuenta
-# Seleccionar tipo de cuenta (debito)
-
-# Ingresar un Monto 
-# Crear cuenta, haciendo click en el botón de "Crear Cuenta"
-# Validar el mensaje
-# Verificar que se genera la nueva cuenta
-
-# Criterios
-# Crear una funcion para el combo box 
-# Crear tambien una page para el modal (comobo | dropdown)
-
+#
