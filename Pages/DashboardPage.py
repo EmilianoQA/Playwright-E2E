@@ -31,6 +31,9 @@ class DashboardPage:
         self.combo_seleccionar_cuenta = 'role=combobox[name="Selecciona cuenta"]'
         self.boton_eliminar_confirmar = 'role=button[name="Eliminar"]'
         self.mensaje_eliminacion_exitosa = 'text="Cuenta eliminada exitosamente"'
+        
+        # Selectores para validaciones de error
+        self.mensaje_error_tipo_cuenta = '[data-testid="texto-error-tipo-cuenta"]'
 
     # Métodos para crear cuenta (mantener como están)
     def abrir_modal_crear_cuenta(self):
@@ -92,3 +95,8 @@ class DashboardPage:
     def verificar_cuenta_eliminada(self):
         """Verificar que la cuenta se eliminó exitosamente"""
         self.funcion.validar_texto(self.mensaje_eliminacion_exitosa, "Cuenta eliminada exitosamente")
+
+    # Métodos para validación de errores
+    def verificar_error_tipo_cuenta_requerido(self):
+        """Verificar mensaje de error cuando tipo de cuenta está vacío"""
+        self.funcion.validar_texto_contiene(self.mensaje_error_tipo_cuenta, "Tipo de cuenta requerido")

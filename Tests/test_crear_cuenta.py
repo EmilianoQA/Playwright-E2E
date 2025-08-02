@@ -75,4 +75,36 @@ def test_eliminar_cuenta(page: Page):
     with allure.step("Verificar que la cuenta se eliminó exitosamente"):
         dashboard_page.verificar_cuenta_eliminada()
 
+
+@allure.feature("Gestión de Cuentas")
+@allure.story("Validación Crear Cuenta")
+@allure.severity(allure.severity_level.NORMAL)
+
+def test_intentar_crear_cuenta_campos_vacios(page: Page):
+    '''Verificar validación cuando se intenta crear cuenta con campos vacíos'''
+    
+    login_page = LoginPage(page)
+    dashboard_page = DashboardPage(page)
+    
+    with allure.step("Realizar login"):
+        login_page.ir_a_login()
+        email_correcto = os.getenv('EMAIL_VALIDO')
+        password_correcto = os.getenv('PASSWORD_VALIDO')
+        login_page.hacer_login_completo(email_correcto, password_correcto)
+    
+    with allure.step("Abrir modal crear cuenta"):
+        dashboard_page.abrir_modal_crear_cuenta()
+    
+    with allure.step("Verificar que se abre el modal"):
+        dashboard_page.verificar_modal_abierto()
+    
+    with allure.step("Intentar crear cuenta SIN llenar campos obligatorios"):
+        # NO llamamos seleccionar_tipo_cuenta() ni ingresar_monto_inicial()
+        # Vamos directo a hacer click en "CREAR CUENTA" con campos vacíos
+        dashboard_page.crear_cuenta()
+    
+    with allure.step("Verificar mensaje de error de validación"):
+        # Verificar que aparece el mensaje de error para tipo de cuenta requerido
+        dashboard_page.verificar_error_tipo_cuenta_requerido()
+
 #
