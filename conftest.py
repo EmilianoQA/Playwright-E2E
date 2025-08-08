@@ -1,6 +1,7 @@
 import pytest
 from playwright.sync_api import sync_playwright, Playwright, Browser, Page
 import os
+import allure  # Importar Allure para reportes
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
@@ -29,7 +30,7 @@ def playwright():
 @pytest.fixture(scope="session")  # Se ejecuta UNA VEZ, reutiliza el mismo navegador
 def browser(playwright: Playwright):
     """Abre el navegador Chromium para todos los tests"""
-    browser = playwright.chromium.launch(headless=True, slow_mo=500)  # Ventana visible
+    browser = playwright.chromium.launch(headless=True, slow_mo=200)  # Ventana visible
     yield browser  # Proporciona el navegador a los tests
     browser.close()  # Se ejecuta al final de todos los tests
 

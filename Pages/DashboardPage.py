@@ -34,6 +34,9 @@ class DashboardPage:
         
         # Selectores para validaciones de error
         self.mensaje_error_tipo_cuenta = '[data-testid="texto-error-tipo-cuenta"]'
+        
+        # Selectores para logout
+        self.boton_logout = '[data-testid="boton-logout"]'
 
     # Métodos para crear cuenta (mantener como están)
     def abrir_modal_crear_cuenta(self):
@@ -100,3 +103,8 @@ class DashboardPage:
     def verificar_error_tipo_cuenta_requerido(self):
         """Verificar mensaje de error cuando tipo de cuenta está vacío"""
         self.funcion.validar_texto_contiene(self.mensaje_error_tipo_cuenta, "Tipo de cuenta requerido")
+
+    # Métodos para logout
+    def hacer_logout(self):
+        """Hacer clic en el botón de cerrar sesión"""
+        self.funcion.click_boton(self.boton_logout)

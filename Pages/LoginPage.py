@@ -14,6 +14,7 @@ class LoginPage:
         base_url = os.getenv('BASE_URL', 'http://localhost:3000')
         self.url_login = f"{base_url}/login"
         self.url_dashboard = f"{base_url}/dashboard"
+        self.url_registro = f"{base_url}/signup"
         
         # Selectores
         self.titulo_login = '[data-testid="titulo-login"]'
@@ -22,6 +23,7 @@ class LoginPage:
         self.boton_login = '[data-testid="boton-login"]'
         self.mensaje_exito = 'text="Inicio de sesión exitoso"'
         self.mensaje_error = 'text="Invalid credentials"'
+        self.enlace_registro = '[data-testid="link-registrarse-login"]'
 
     def ir_a_login(self):
         """Navegar a la página de login"""
@@ -66,3 +68,19 @@ class LoginPage:
         self.hacer_click_login()
         self.verificar_mensaje_exito()
         self.verificar_login_exitoso()
+
+    def verificar_que_no_hay_mensaje_exito(self):
+        """Verificar que NO aparece el mensaje de éxito (validación negativa)"""
+        # Esperamos un momento y verificamos que el mensaje NO está visible
+        self.funcion.esperar(1)  # Dar tiempo a que aparezca si fuera a aparecer
+        mensaje_exito_elemento = self.page.locator(self.mensaje_exito)
+        # Verificar que el elemento no está visible
+        expect(mensaje_exito_elemento).not_to_be_visible()
+
+    def hacer_click_enlace_registro(self):
+        """Hacer clic en el enlace 'Regístrate' para ir a signup"""
+        self.funcion.click_boton(self.enlace_registro)
+
+    def verificar_redireccion_a_registro(self):
+        """Verificar que se redirige a la página de registro /signup"""
+        self.funcion.validar_url(self.url_registro)
