@@ -107,4 +107,4 @@ def test_intentar_crear_cuenta_campos_vacios(page: Page):
         # Verificar que aparece el mensaje de error para tipo de cuenta requerido
         dashboard_page.verificar_error_tipo_cuenta_requerido()
 
-#
+
