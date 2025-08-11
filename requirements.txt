@@ -1,0 +1,15 @@
+# Playwright para automatización E2E
+playwright==1.48.0
+
+# Pytest para ejecución de tests
+pytest==8.4.1
+pytest-html==4.1.1
+
+# Allure para reportes
+allure-pytest==2.15.0
+
+# Manejo de variables de entorno
+python-dotenv==1.0.0
+
+# Requests para tests de API
+requests==2.32.3

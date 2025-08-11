@@ -1,0 +1,79 @@
+name: E2E Tests with Allure Reports
+
+# Cuándo ejecutar: en push y pull requests
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+# Trabajos a ejecutar
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # 1. Descargar código del repositorio
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    # 2. Configurar Python
+    - name: Set up Python 3.13
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.13'
+    
+    # 3. Instalar dependencias de Python
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    # 4. Instalar navegadores de Playwright
+    - name: Install Playwright browsers
+      run: playwright install --with-deps
+    
+    # 5. Crear archivo .env para GitHub Actions
+    - name: Create .env file
+      run: |
+        echo "BASE_URL=http://localhost:3000" > .env
+        echo "API_BASE_URL=http://localhost:6007" >> .env
+        echo "EMAIL_VALIDO=test@example.com" >> .env
+        echo "PASSWORD_VALIDO=password123" >> .env
+        echo "EMAIL_INCORRECTO=wrong@example.com" >> .env
+        echo "PASSWORD_INCORRECTO=wrongpass" >> .env
+    
+    # 6. Ejecutar tests con Playwright (modo headless para CI)
+    - name: Run E2E tests
+      run: pytest -v --browser chromium --headed=false
+      env:
+        PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+    
+    # 7. Subir screenshots de fallos como artefactos
+    - name: Upload screenshots on failure
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: test-screenshots
+        path: screenshots/
+        retention-days: 7
+    
+    # 8. Generar reporte de Allure
+    - name: Generate Allure Report
+      uses: simple-elf/allure-report-action@master
+      if: always()
+      id: allure-report
+      with:
+        allure_results: allure-results
+        allure_report: allure-report
+        gh_pages: gh-pages
+        allure_history: allure-history
+    
+    # 9. Publicar reporte en GitHub Pages
+    - name: Deploy Allure Report to GitHub Pages
+      if: always()
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: allure-history
+        destination_dir: allure-report
