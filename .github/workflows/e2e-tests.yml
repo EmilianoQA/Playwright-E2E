@@ -44,9 +44,9 @@ jobs:
         echo "EMAIL_INCORRECTO=wrong@example.com" >> .env
         echo "PASSWORD_INCORRECTO=wrongpass" >> .env
     
-    # 6. Ejecutar tests con Playwright (modo headless para CI)
+    # 6. Ejecutar tests (sin argumentos incorrectos)
     - name: Run E2E tests
-      run: pytest -v --browser chromium --headed=false
+      run: pytest -v
       env:
         PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
     
