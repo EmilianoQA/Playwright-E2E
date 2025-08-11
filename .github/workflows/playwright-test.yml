@@ -1,0 +1,75 @@
+# .github/workflows/playwright-tests.yml
+name: Playwright Tests
+
+on:
+  # Se ejecuta en push a main y pull requests
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  
+  # Permite ejecución manual desde GitHub
+  workflow_dispatch:
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Install Playwright browsers
+      run: playwright install --with-deps chromium
+    
+    - name: Create .env file
+      run: |
+        echo "BASE_URL=http://localhost:3000" >> .env
+        echo "API_BASE_URL=http://localhost:6007" >> .env
+        echo "EMAIL_VALIDO=test@example.com" >> .env
+        echo "PASSWORD_VALIDO=testpassword123" >> .env
+    
+    - name: Start application (if needed)
+      run: |
+        # Si necesitas levantar tu app, descomenta y ajusta:
+        # npm install
+        # npm run dev &
+        # sleep 10
+        echo "App started"
+    
+    - name: Run Playwright tests
+      run: pytest Tests/ --alluredir=allure-results --tb=short
+    
+    - name: Upload Allure results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: allure-results
+        path: allure-results/
+        retention-days: 30
+    
+    - name: Upload screenshots
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: screenshots
+        path: screenshots/
+        retention-days: 30
+    
+    - name: Upload traces
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: traces
+        path: trace.zip
+        retention-days: 30
