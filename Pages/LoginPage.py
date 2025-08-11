@@ -24,6 +24,7 @@ class LoginPage:
         self.mensaje_exito = 'text="Inicio de sesión exitoso"'
         self.mensaje_error = 'text="Invalid credentials"'
         self.enlace_registro = '[data-testid="link-registrarse-login"]'
+        self.mensaje_error_usuario_existente = 'text="Email already in use"'  # o el selector correcto
 
     def ir_a_login(self):
         """Navegar a la página de login"""
@@ -84,3 +85,7 @@ class LoginPage:
     def verificar_redireccion_a_registro(self):
         """Verificar que se redirige a la página de registro /signup"""
         self.funcion.validar_url(self.url_registro)
+
+    def verificar_error_usuario_existente(self):
+        """Verificar que aparece el mensaje de error cuando el usuario ya existe"""
+        self.funcion.validar_elemento_visible(self.mensaje_error)

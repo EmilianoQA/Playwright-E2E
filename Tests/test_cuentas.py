@@ -7,13 +7,16 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# ==========================================
+# CASOS DE PRUEBA - GESTIÓN DE CUENTAS
+# ==========================================
+
 @allure.feature("Gestión de Cuentas")
 @allure.story("Crear Nueva Cuenta")
 @allure.severity(allure.severity_level.CRITICAL)
 
-
-def test_crear_cuenta(page: Page):
-    '''Crear una cuenta nueva y verificar que se genera correctamente'''
+def test_TC101_crear_cuenta_debito_exitoso(page: Page):
+    """TC-101: Crear una cuenta de débito y verificar que se genera correctamente"""
     
     login_page = LoginPage(page)
     dashboard_page = DashboardPage(page)
@@ -47,9 +50,8 @@ def test_crear_cuenta(page: Page):
 @allure.story("Eliminar Cuenta")
 @allure.severity(allure.severity_level.NORMAL)
 
-
-def test_eliminar_cuenta(page: Page):
-    '''Eliminar una cuenta existente y verificar eliminación'''
+def test_TC102_eliminar_cuenta_existente(page: Page):
+    """TC-102: Eliminar una cuenta existente y verificar eliminación"""
     
     login_page = LoginPage(page)
     dashboard_page = DashboardPage(page)
@@ -80,8 +82,8 @@ def test_eliminar_cuenta(page: Page):
 @allure.story("Validación Crear Cuenta")
 @allure.severity(allure.severity_level.NORMAL)
 
-def test_intentar_crear_cuenta_campos_vacios(page: Page):
-    '''Verificar validación cuando se intenta crear cuenta con campos vacíos'''
+def test_TC103_crear_cuenta_campos_vacios(page: Page):
+    """TC-103: Verificar validación cuando se intenta crear cuenta con campos vacíos"""
     
     login_page = LoginPage(page)
     dashboard_page = DashboardPage(page)
@@ -106,5 +108,3 @@ def test_intentar_crear_cuenta_campos_vacios(page: Page):
     with allure.step("Verificar mensaje de error de validación"):
         # Verificar que aparece el mensaje de error para tipo de cuenta requerido
         dashboard_page.verificar_error_tipo_cuenta_requerido()
-
-

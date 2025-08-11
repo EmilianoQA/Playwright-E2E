@@ -1,16 +1,50 @@
 import allure
-from playwright.sync_api import Page
+from playwright.sync_api import Page, expect
 from Pages.LoginPage import LoginPage
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
+# ==========================================
+# CASOS DE PRUEBA - LOGIN
+# ==========================================
+
+@allure.feature("Autenticación")
+@allure.story("Login Exitoso")
+@allure.severity(allure.severity_level.CRITICAL)
+
+def test_TC001_login_exitoso(page: Page):
+    """TC-001: Verificar login exitoso con credenciales válidas"""
+    
+    login_page = LoginPage(page)
+    
+    with allure.step("Navegar a la página de login"):
+        login_page.ir_a_login()
+        
+    with allure.step("Verificar título de la página"):
+        login_page.verificar_titulo()
+    
+    with allure.step("Ingresar credenciales válidas"):
+        email_correcto = os.getenv('EMAIL_VALIDO')
+        password_correcto = os.getenv('PASSWORD_VALIDO')
+        login_page.llenar_email(email_correcto)
+        login_page.llenar_password(password_correcto)
+    
+    with allure.step("Hacer clic en el botón de login"):
+        login_page.hacer_click_login()
+    
+    with allure.step("Verificar login exitoso"):
+        login_page.verificar_mensaje_exito()
+        login_page.verificar_login_exitoso()
+
+
 @allure.feature("Autenticación")
 @allure.story("Login con Credenciales Inválidas")
 @allure.severity(allure.severity_level.NORMAL)
-def test_login_credenciales_incorrectas(page: Page):
-    """Test para verificar que el login falla con credenciales incorrectas"""
+
+def test_TC002_login_credenciales_incorrectas(page: Page):
+    """TC-002: Verificar que el login falla con credenciales incorrectas"""
     
     login_page = LoginPage(page)
     
@@ -33,8 +67,9 @@ def test_login_credenciales_incorrectas(page: Page):
 @allure.feature("Autenticación")
 @allure.story("Validación de Campos Obligatorios")
 @allure.severity(allure.severity_level.NORMAL)
-def test_login_campos_vacios_no_redirige(page: Page):
-    """Test para verificar que con campos vacíos NO se redirige al dashboard"""
+
+def test_TC003_login_campos_vacios_no_redirige(page: Page):
+    """TC-003: Verificar que con campos vacíos NO se redirige al dashboard"""
     
     login_page = LoginPage(page)
     
@@ -61,8 +96,9 @@ def test_login_campos_vacios_no_redirige(page: Page):
 @allure.feature("Autenticación")
 @allure.story("Validación Nativa del Navegador")
 @allure.severity(allure.severity_level.NORMAL)
-def test_login_campos_vacios_validacion_nativa(page: Page):
-    """Test alternativo: Verificar mensajes nativos HTML5 del navegador"""
+
+def test_TC004_login_validacion_nativa_html5(page: Page):
+    """TC-004: Verificar mensajes nativos HTML5 del navegador"""
     
     login_page = LoginPage(page)
     

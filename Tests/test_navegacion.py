@@ -7,11 +7,15 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# ==========================================
+# CASOS DE PRUEBA - NAVEGACIÓN
+# ==========================================
+
 @allure.feature("Navegación")
 @allure.story("Enlace de Registro")
 @allure.severity(allure.severity_level.NORMAL)
-def test_enlace_registro_desde_login(page: Page):
-    """Verificar navegación desde login hacia registro usando enlace"""
+def test_TC151_enlace_registro_desde_login(page: Page):
+    """TC-151: Verificar navegación desde login hacia registro usando enlace"""
     
     login_page = LoginPage(page)
     
@@ -33,8 +37,8 @@ def test_enlace_registro_desde_login(page: Page):
 @allure.feature("Autenticación")
 @allure.story("Logout y Protección de Rutas")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_logout_y_proteccion_rutas(page: Page):
-    """Test completo: Login → Logout → Verificar protección de rutas"""
+def test_TC152_logout_y_proteccion_rutas(page: Page):
+    """TC-152: Test completo - Login → Logout → Verificar protección de rutas"""
     
     login_page = LoginPage(page)
     dashboard_page = DashboardPage(page)
