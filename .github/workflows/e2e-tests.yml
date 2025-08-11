@@ -62,7 +62,6 @@ jobs:
     - name: Generate Allure Report
       uses: simple-elf/allure-report-action@master
       if: always()
-      id: allure-report
       with:
         allure_results: allure-results
         allure_report: allure-report
@@ -70,10 +69,9 @@ jobs:
         allure_history: allure-history
     
     # 9. Publicar reporte en GitHub Pages
-    - name: Deploy Allure Report to GitHub Pages
+    - name: Deploy to GitHub Pages
       if: always()
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: allure-history
-        destination_dir: allure-report
