@@ -33,8 +33,8 @@ jobs:
     # 4. Instalar navegadores de Playwright
     - name: Install Playwright browsers
       run: |
-        playwright install chromium
-        playwright install-deps chromium
+        python -m playwright install chromium
+        python -m playwright install-deps
     
     # 5. Crear archivo .env para GitHub Actions
     - name: Create .env file
