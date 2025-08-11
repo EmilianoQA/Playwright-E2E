@@ -1,11 +1,12 @@
 name: E2E Tests with Allure Reports
 
-# Cuándo ejecutar: en push y pull requests
+# Cuándo ejecutar: en push, pull requests Y manualmente
 on:
   push:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+  workflow_dispatch:
 
 # Trabajos a ejecutar
 jobs:
