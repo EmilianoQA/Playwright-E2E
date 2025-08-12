@@ -20,7 +20,7 @@ jobs:
     
     # 2. Configurar Python
     - name: Set up Python 3.13
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.13'
     
@@ -38,7 +38,7 @@ jobs:
     
     # 5. Install and start MongoDB
     - name: Start MongoDB
-      uses: supercharge/mongodb-github-action@1.10.0
+      uses: supercharge/mongodb-github-action@1.11.0
       with:
         mongodb-version: '6.0'
     
@@ -97,16 +97,7 @@ jobs:
       env:
         PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
     
-    # 7. Subir screenshots de fallos como artefactos
-    - name: Upload screenshots on failure
-      uses: actions/upload-artifact@v4
-      if: failure()
-      with:
-        name: test-screenshots
-        path: screenshots/
-        retention-days: 7
-    
-    # 8. Generar reporte de Allure
+    # 11. Generar reporte de Allure
     - name: Generate Allure Report
       uses: simple-elf/allure-report-action@master
       if: always()
@@ -116,10 +107,10 @@ jobs:
         gh_pages: gh-pages
         allure_history: allure-history
     
-    # 9. Publicar reporte en GitHub Pages
+    # 12. Publicar reporte en GitHub Pages
     - name: Deploy to GitHub Pages
       if: always()
-      uses: peaceiris/actions-gh-pages@v3
+      uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: allure-history
