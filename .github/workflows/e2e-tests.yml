@@ -30,13 +30,56 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     
-    # 4. Instalar navegadores de Playwright
+    # 4. Setup Node.js for Redux Athena Bank
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    # 5. Install and start MongoDB
+    - name: Start MongoDB
+      uses: supercharge/mongodb-github-action@1.10.0
+      with:
+        mongodb-version: '6.0'
+    
+    # 6. Setup Redux Athena Bank Backend
+    - name: Install backend dependencies
+      run: |
+        cd redux-athena-bank/backend
+        npm install
+    
+    - name: Create backend .env file
+      run: |
+        cd redux-athena-bank/backend
+        echo "JWT_SECRET=mi_secreto_super_seguro_123" > .env
+        echo "PORT=6007" >> .env
+        echo "MONGO_URI=mongodb://localhost:27017/redux-athena-bank" >> .env
+    
+    - name: Start backend
+      run: |
+        cd redux-athena-bank/backend
+        npm run dev &
+        sleep 5
+    
+    # 7. Setup Redux Athena Bank Frontend
+    - name: Install frontend dependencies
+      run: |
+        cd redux-athena-bank/frontend
+        npm install
+    
+    - name: Start frontend
+      run: |
+        cd redux-athena-bank/frontend
+        npm run dev &
+        sleep 10
+    
+    # 8. Instalar navegadores de Playwright
     - name: Install Playwright browsers
       run: |
         python -m playwright install chromium
         python -m playwright install-deps
     
-    # 5. Crear archivo .env para GitHub Actions
+    # 9. Crear archivo .env para tests
     - name: Create .env file
       run: |
         echo "BASE_URL=http://localhost:3000" > .env
@@ -46,7 +89,7 @@ jobs:
         echo "EMAIL_INCORRECTO=wrong@example.com" >> .env
         echo "PASSWORD_INCORRECTO=wrongpass" >> .env
     
-    # 6. Ejecutar tests (sin argumentos incorrectos)
+    # 10. Ejecutar todos los tests E2E
     - name: Run E2E tests
       run: pytest -v
       env:
