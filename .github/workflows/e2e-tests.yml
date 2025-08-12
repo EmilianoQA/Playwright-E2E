@@ -45,6 +45,8 @@ jobs:
     # 6. Setup Redux Athena Bank Backend
     - name: Install backend dependencies
       run: |
+        ls -la
+        ls -la redux-athena-bank/
         cd redux-athena-bank/backend
         npm install
     
