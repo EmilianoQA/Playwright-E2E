@@ -38,6 +38,10 @@ jobs:
         python -m playwright install chromium
         python -m playwright install-deps
     
+    - name: Clone Redux Athena Bank
+      run: |
+        git clone https://github.com/Atenea-Conocimientos/redux-athena-bank.git
+    
     - name: Start MongoDB
       uses: supercharge/mongodb-github-action@1.11.0
       with:
