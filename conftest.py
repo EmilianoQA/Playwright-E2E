@@ -1,7 +1,6 @@
 import pytest
 from playwright.sync_api import sync_playwright, Playwright, Browser, Page
 import os
-import allure  # Importar Allure para reportes
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):

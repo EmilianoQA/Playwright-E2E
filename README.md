@@ -1,141 +1,218 @@
-# Playwright + pytest + Allure Automation
+# 🎭 Playwright E2E - Automatización Profesional
 
-Proyecto de automatización E2E usando Playwright con pytest y reportes profesionales con Allure.
+Proyecto de automatización E2E usando **Playwright + Python + Allure Reports** con arquitectura **Page Object Model** y **API Helpers**.
 
-## Estructura del Proyecto
+## 🏗️ Arquitectura del Proyecto
 
 ```
 playwright_E2E/
-├── Pages/
-│   ├── LoginPage.py
-│   └── RegistroPage.py
-├── Tests/
-│   ├── test_login.py
-│   ├── test_registro.py
-│   ├── test_registro_exitoso.py
-│   └── test_registro_fallido.py
-├── Funciones.py
-├── conftest.py
-├── pytest.ini
-├── .env
-└── README.md
+├── Pages/                    # Page Object Model
+│   ├── LoginPage.py         # Página de login
+│   ├── RegistroPage.py      # Página de registro
+│   ├── DashboardPage.py     # Dashboard principal
+│   └── TransferenciasPage.py # Transferencias de dinero
+├── Tests/                   # Tests organizados por funcionalidad
+│   ├── setup/              # Setup de autenticación
+│   │   └── auth_setup.py   # Crear usuarios + sesiones
+│   ├── test_login.py       # TC001-TC004: Tests de login
+│   ├── test_registro.py    # TC051-TC053: Tests de registro
+│   ├── test_cuentas.py     # TC101-TC103: Tests de cuentas
+│   ├── test_navegacion.py  # TC151-TC152: Tests de navegación
+│   └── test_transferencias.py # TC201-TC202: Tests de transferencias
+├── Utils/                   # Utilidades reutilizables
+│   ├── api_helpers.py      # Crear usuarios via API
+│   └── data_helpers.py     # Generar datos de prueba
+├── Funciones.py            # Funciones centralizadas
+├── conftest.py             # Configuración pytest
+├── pytest.ini             # Configuración de pytest
+├── package.json            # Scripts npm para ejecutar tests
+├── requirements.txt        # Dependencias Python
+└── TEST_CASES.md          # Registro de casos de prueba
 ```
 
-## Setup
+## 🚀 Configuración del Entorno
 
-### 1. Crear y activar entorno virtual
+### Prerrequisitos
+- **Python 3.13+**
+- **Node.js** (para npm scripts)
+- **Redux Athena Bank** app corriendo en `localhost:3000`
+
+### Instalación
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
+# 1. Crear entorno virtual
+python -m venv .venv
+source .venv/bin/activate  # Linux/Mac
+# .venv\Scripts\activate   # Windows
+
+# 2. Instalar dependencias
+pip install -r requirements.txt
+
+# 3. Instalar navegadores de Playwright
+playwright install
+
+# 4. Configurar variables de entorno
+cp .env.example .env
+# Editar .env con tus configuraciones
 ```
 
-### 2. Instalar dependencias
+## 🧪 Ejecución de Tests
+
+### Comandos NPM (Recomendado)
 ```bash
-pip install pytest playwright python-dotenv allure-pytest
+# Todos los tests con reporte
+npm run test:report
+
+# Tests específicos
+npm run test:all              # Todos los tests
+npm run test:login            # Solo tests de login
+npm run test:transferencias   # Solo tests de transferencias
+
+# Solo generar reporte
+npm run report
 ```
 
-### 3. Instalar navegadores de Playwright
+### Comandos Pytest Directos
 ```bash
-playwright install chromium
+# Ejecutar tests específicos
+pytest Tests/test_transferencias.py -v
+
+# Todos los tests
+pytest -v
+
+# Con Allure (manual)
+pytest -v -p allure_pytest --alluredir=allure-results --clean-alluredir
+allure serve allure-results
 ```
 
-### 4. Instalar Allure (para reportes)
-```bash
-brew install allure
-```
+## 📊 Casos de Prueba Implementados
 
-### 5. Configurar variables de entorno
-Crear archivo `.env` en la raíz del proyecto:
-```properties
+### 🔐 Autenticación (TC001-TC004)
+- **TC001**: Login exitoso
+- **TC002**: Login con credenciales incorrectas  
+- **TC003**: Validación campos vacíos
+- **TC004**: Validación HTML5 nativa
+
+### 📝 Registro (TC051-TC053)
+- **TC051**: Registro exitoso frontend
+- **TC052**: Registro con usuario existente
+- **TC053**: Registro via API + verificación E2E
+
+### 💳 Gestión de Cuentas (TC101-TC103)
+- **TC101**: Crear cuenta débito exitoso
+- **TC102**: Eliminar cuenta existente
+- **TC103**: Validación campos vacíos
+
+### 🧭 Navegación (TC151-TC152)
+- **TC151**: Enlace registro desde login
+- **TC152**: Logout y protección de rutas
+
+### 💸 Transferencias (TC201-TC202)
+- **TC201**: Enviar dinero entre usuarios
+- **TC202**: Verificar dinero recibido
+
+## 🔧 Características Técnicas
+
+### 🏛️ Arquitectura
+- **Page Object Model**: Separación clara de responsabilidades
+- **Setup con API**: Usuarios creados automáticamente via API
+- **Sesiones guardadas**: Sin login repetido entre tests
+- **Tests con dependencias**: TC202 depende de TC201
+
+### 📈 Reportes
+- **Allure Reports**: Reportes profesionales con screenshots
+- **Limpieza automática**: Reportes frescos en cada ejecución
+- **Screenshots automáticos**: En caso de fallos
+- **Datos adjuntos**: Información relevante en reportes
+
+### 🔄 Reutilización
+- **API Helpers**: Crear usuarios/cuentas programáticamente
+- **Data Helpers**: Generar datos de prueba dinámicos
+- **Funciones centralizadas**: Métodos reutilizables
+- **Utils modulares**: Componentes independientes
+
+## 🛠️ Configuración Avanzada
+
+### Variables de Entorno (.env)
+```env
 # URLs de la aplicación
 BASE_URL=http://localhost:3000
+API_BASE_URL=http://localhost:6007
 
 # Credenciales de prueba
-EMAIL_VALIDO=usuario@test.com
+EMAIL_VALIDO=test@example.com
 PASSWORD_VALIDO=password123
-
-# Credenciales incorrectas para tests negativos
-EMAIL_INCORRECTO=malo@test.com
+EMAIL_INCORRECTO=wrong@example.com
 PASSWORD_INCORRECTO=wrongpass
 ```
 
-## Ejecución de Tests
-
-### Comandos básicos
-```bash
-# Ejecutar todos los tests
-pytest
-
-# Ejecutar tests específicos
-pytest Tests/test_login.py
-
-# Ejecutar con más detalle
-pytest -v
-
-# Ejecutar tests por categoría
-pytest -k "exitoso"
-pytest -k "fallido"
+### Configuración Pytest (pytest.ini)
+```ini
+[tool:pytest]
+addopts = --alluredir=allure-results --clean-alluredir -p allure_pytest
+testpaths = Tests
+python_files = test_*.py
+python_functions = test_*
+markers =
+    smoke: marca tests como smoke tests
+    regression: marca tests como regression tests
 ```
 
-### Ver reportes de Allure
+## 📋 Flujo de Trabajo
+
+### Tests Independientes
 ```bash
-# Después de ejecutar tests
-allure serve allure-results
+# Tests que no requieren setup especial
+npm run test:login
+npm run test:registro
+npm run test:cuentas
+npm run test:navegacion
 ```
 
-### Ver traces de Playwright (para debugging)
+### Tests con Setup Automático
 ```bash
-playwright show-trace trace.zip
+# Tests de transferencias (requieren 2 usuarios)
+npm run test:transferencias
 ```
 
-## Características
+**El setup automáticamente:**
+1. Crea 2 usuarios via API (emisor y receptor)
+2. Hace login de ambos usuarios
+3. Crea cuentas (emisor con $1000, receptor con $0)
+4. Guarda las sesiones para reutilizar
+5. Ejecuta tests de transferencias
 
-### 🎯 Tests Implementados
-- **Login exitoso** con credenciales válidas
-- **Login fallido** con credenciales incorrectas
-- **Registro exitoso** con datos aleatorios
-- **Registro fallido** con email existente
+## 🎯 Buenas Prácticas Implementadas
 
-### 📊 Reportes Profesionales
-- **Allure Reports** con features, stories y steps
-- **Trace Viewer** de Playwright para debugging
-- **Screenshots** automáticos en fallos
-- **Timeline** detallado de ejecución
+### ✅ Código Limpio
+- Nombres descriptivos en español
+- Separación de responsabilidades
+- Reutilización de componentes
+- Documentación clara
 
-### 🏗️ Arquitectura
-- **Page Object Model** para mantenibilidad
-- **Funciones reutilizables** centralizadas
-- **Variables de entorno** para configuración
-- **Fixtures** de pytest para setup/teardown
+### ✅ Tests Robustos
+- Selectores estables
+- Validaciones múltiples
+- Manejo de errores
+- Screenshots automáticos
 
-### 🧪 Configuración Automatizada
-- **pytest.ini** configurado para ejecución simple
-- **Limpieza automática** de reportes anteriores
-- **Tracing habilitado** por defecto
-- **Markers** para categorización de tests
+### ✅ Mantenibilidad
+- Arquitectura escalable
+- Configuración centralizada
+- Utils reutilizables
+- Documentación actualizada
 
-## Comandos Útiles
+## 🚀 Próximos Pasos
 
-```bash
-# Desarrollo
-source .venv/bin/activate
-pytest -v
+- [ ] CI/CD con GitHub Actions
+- [ ] Tests paralelos
+- [ ] Data-driven testing
+- [ ] Integración con bases de datos
+- [ ] Tests de performance
 
-# Reportes
-allure serve allure-results
+## 📞 Contacto
 
-# Debugging
-playwright show-trace trace.zip
+**Proyecto desarrollado como parte del aprendizaje de automatización E2E profesional.**
 
-# Git
-git add .
-git commit -m "descripción"
-git push
-```
+---
 
-## Notas
-
-- Los tests usan **datos aleatorios** para registros
-- **Allure** genera reportes automáticamente en cada ejecución
-- **Traces** se guardan en `trace.zip` para debugging
-- Las **variables de entorno** deben estar configuradas antes de ejecutar
+*Automatización E2E • Playwright • Python • Allure Reports • Page Object Model*
