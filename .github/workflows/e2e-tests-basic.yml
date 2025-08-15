@@ -41,6 +41,9 @@ jobs:
     - name: Clone Redux Athena Bank
       run: |
         git clone https://github.com/Atenea-Conocimientos/redux-athena-bank.git
+        ls -la redux-athena-bank/
+        ls -la redux-athena-bank/backend/ || echo "Backend folder not found"
+        ls -la redux-athena-bank/frontend/ || echo "Frontend folder not found"
     
     - name: Start MongoDB
       uses: supercharge/mongodb-github-action@1.11.0
