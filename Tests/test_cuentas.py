@@ -44,7 +44,7 @@ def test_TC101_crear_cuenta_debito_exitoso(page: Page):
     
     with allure.step("Verificar que la cuenta se creó exitosamente"):
         dashboard_page.verificar_cuenta_creada()
-
+    
 
 @allure.feature("Gestión de Cuentas")
 @allure.story("Eliminar Cuenta")
