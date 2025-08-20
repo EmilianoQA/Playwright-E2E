@@ -29,7 +29,7 @@ def playwright():
 @pytest.fixture(scope="session")  # Se ejecuta UNA VEZ, reutiliza el mismo navegador
 def browser(playwright: Playwright):
     """Abre el navegador Chromium para todos los tests"""
-    browser = playwright.chromium.launch(headless=True, slow_mo=200)  # Ventana visible
+    browser = playwright.chromium.launch(headless=False, slow_mo=200)  # Ventana visible
     yield browser  # Proporciona el navegador a los tests
     browser.close()  # Se ejecuta al final de todos los tests
 
