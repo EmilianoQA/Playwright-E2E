@@ -234,6 +234,7 @@ jobs:
           esac
         env:
           PLAYWRIGHT_BROWSER: ${{ github.event.inputs.browser || 'chromium' }}
+          PLAYWRIGHT_HEADLESS: 1
 
       # ============================================================
       # 📊 REPORTING: Allure Reports Generation

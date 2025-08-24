@@ -29,7 +29,15 @@ def playwright():
 @pytest.fixture(scope="session")  # Se ejecuta UNA VEZ, reutiliza el mismo navegador
 def browser(playwright: Playwright):
     """Abre el navegador Chromium para todos los tests"""
-    browser = playwright.chromium.launch(headless=False, slow_mo=200)  # Ventana visible
+    # Leer variable de entorno para headless (para CI/CD)
+    headless_mode = os.getenv('PLAYWRIGHT_HEADLESS', '0') == '1'
+    slow_mo_delay = 0 if headless_mode else 200
+    
+    browser = playwright.chromium.launch(
+        headless=headless_mode, 
+        slow_mo=slow_mo_delay
+    )
+    
     yield browser  # Proporciona el navegador a los tests
     browser.close()  # Se ejecuta al final de todos los tests
 
