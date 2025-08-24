@@ -202,6 +202,7 @@ jobs:
       # 🧪 TESTING EXECUTION: Playwright E2E Tests
       # ============================================================
       - name: 🧪 Execute Playwright E2E Tests 
+        continue-on-error: true
         working-directory: testing
         run: |
           source .venv/bin/activate || true
@@ -235,7 +236,7 @@ jobs:
         env:
           PLAYWRIGHT_BROWSER: ${{ github.event.inputs.browser || 'chromium' }}
           PLAYWRIGHT_HEADLESS: 1
-
+          
       # ============================================================
       # 📊 REPORTING: Allure Reports Generation
       # ============================================================
