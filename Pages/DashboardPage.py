@@ -110,3 +110,7 @@ class DashboardPage:
     def verificar_saldo_total(self, saldo_esperado: str):
         """Verificar que el saldo total sea el esperado"""
         self.funcion.validar_texto_contiene(self.saldo_total, saldo_esperado)
+
+    def hacer_logout(self):
+        """Hacer clic en el botón de logout"""
+        self.funcion.click_boton(self.boton_logout)

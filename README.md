@@ -181,38 +181,3 @@ npm run test:transferencias
 4. Guarda las sesiones para reutilizar
 5. Ejecuta tests de transferencias
 
-## 🎯 Buenas Prácticas Implementadas
-
-### ✅ Código Limpio
-- Nombres descriptivos en español
-- Separación de responsabilidades
-- Reutilización de componentes
-- Documentación clara
-
-### ✅ Tests Robustos
-- Selectores estables
-- Validaciones múltiples
-- Manejo de errores
-- Screenshots automáticos
-
-### ✅ Mantenibilidad
-- Arquitectura escalable
-- Configuración centralizada
-- Utils reutilizables
-- Documentación actualizada
-
-## 🚀 Próximos Pasos
-
-- [ ] CI/CD con GitHub Actions
-- [ ] Tests paralelos
-- [ ] Data-driven testing
-- [ ] Integración con bases de datos
-- [ ] Tests de performance
-
-## 📞 Contacto
-
-**Proyecto desarrollado como parte del aprendizaje de automatización E2E profesional.**
-
----
-
-*Automatización E2E • Playwright • Python • Allure Reports • Page Object Model*
