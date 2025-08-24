@@ -11,6 +11,8 @@
     "test": "source .venv/bin/activate && pytest -p allure_pytest --alluredir=allure-results --clean-alluredir",
     "test:all": "source .venv/bin/activate && pytest -v -p allure_pytest --alluredir=allure-results --clean-alluredir",
     "test:login": "source .venv/bin/activate && pytest Tests/test_login.py -v -p allure_pytest --alluredir=allure-results --clean-alluredir",
+    "test:login_ddt": "source .venv/bin/activate && pytest Tests/test_login_ddt.py -v -p allure_pytest --alluredir=allure-results --clean-alluredir",
+    
     "test:registro": "source .venv/bin/activate && pytest Tests/test_registro.py -v -p allure_pytest --alluredir=allure-results --clean-alluredir",
     "test:cuentas": "source .venv/bin/activate && pytest Tests/test_cuentas.py -v -p allure_pytest --alluredir=allure-results --clean-alluredir",
     "test:navegacion": "source .venv/bin/activate && pytest Tests/test_navegacion.py -v -p allure_pytest --alluredir=allure-results --clean-alluredir",

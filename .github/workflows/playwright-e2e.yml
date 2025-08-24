@@ -1,0 +1,331 @@
+name: 🎭 Playwright E2E Tests
+
+# Triggers: Manual execution and push to main
+on:
+  workflow_dispatch:
+    inputs:
+      test_suite:
+        description: '🎯 Selecciona qué pruebas ejecutar'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - login
+          - registro
+          - cuentas
+          - navegacion
+          - transferencias
+      browser:
+        description: '🌐 Navegador para testing'
+        required: true
+        default: 'chromium'
+        type: choice
+        options:
+          - chromium
+          - firefox
+          - webkit
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+# Environment and permissions
+env:
+  NODE_VERSION: '18'
+  PYTHON_VERSION: '3.13'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  test:
+    name: 🧪 Execute E2E Tests
+    runs-on: ubuntu-latest
+    environment: Testing
+    
+    # Service containers for MongoDB
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "echo 'db.runCommand({ping:1}).ok' | mongosh localhost:27017/test --quiet"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      # ============================================================
+      # 📥 SETUP: Checkout repositories
+      # ============================================================
+      - name: 📥 Checkout testing repository
+        uses: actions/checkout@v4
+        with:
+          path: testing
+
+      - name: 📥 Checkout Redux Athena Bank app
+        uses: actions/checkout@v4
+        with:
+          repository: EmilianoQA/redux-athena-bank
+          path: app
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # ============================================================
+      # ⚙️ SETUP: Development environments  
+      # ============================================================
+      - name: ⚙️ Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: |
+            app/backend/package-lock.json
+            app/frontend/package-lock.json
+            testing/package-lock.json
+
+      - name: 🐍 Setup Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: testing/requirements.txt
+
+      # ============================================================
+      # 📦 INSTALLATION: Dependencies
+      # ============================================================
+      - name: 📦 Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y python3-venv
+
+      - name: 📦 Create Python virtual environment
+        working-directory: testing
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install --upgrade pip setuptools wheel
+
+      - name: 📦 Install Python testing dependencies
+        working-directory: testing
+        run: |
+          source .venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: 🎭 Install Playwright browsers
+        working-directory: testing
+        run: |
+          source .venv/bin/activate
+          playwright install --with-deps ${{ github.event.inputs.browser || 'chromium' }}
+
+      - name: 📦 Install Redux Bank backend dependencies
+        working-directory: app/backend
+        run: npm ci
+
+      - name: 📦 Install Redux Bank frontend dependencies  
+        working-directory: app/frontend
+        run: npm ci
+
+      - name: 📦 Install testing project Node dependencies
+        working-directory: testing
+        run: npm ci
+
+      # ============================================================
+      # 🔧 CONFIGURATION: Environment setup
+      # ============================================================
+      - name: 🔧 Configure Redux Bank backend environment
+        working-directory: app/backend
+        run: |
+          cat > .env << EOF
+          MONGO_URI=${{ secrets.MONGO_URI }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          PORT=6007
+          NODE_ENV=test
+          EOF
+
+      - name: 🔧 Configure Redux Bank frontend environment
+        working-directory: app/frontend  
+        run: |
+          cat > .env << EOF
+          VITE_API_BASE=http://localhost:6007/api
+          EOF
+
+      - name: 🔧 Configure testing environment
+        working-directory: testing
+        run: |
+          cat > .env << EOF
+          BASE_URL=${{ secrets.BASE_URL }}
+          API_BASE_URL=${{ secrets.API_BASE_URL }}
+          MONGO_URI=${{ secrets.MONGO_URI }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          EMAIL_VALIDO=test@example.com
+          PASSWORD_VALIDO=password123
+          EMAIL_INCORRECTO=wrong@example.com
+          PASSWORD_INCORRECTO=wrongpass
+          EOF
+
+      # ============================================================
+      # 🚀 APPLICATION STARTUP: Redux Athena Bank
+      # ============================================================
+      - name: 🚀 Start Redux Bank backend
+        working-directory: app/backend
+        run: |
+          npm run dev &
+          echo "Backend started with PID: $!"
+          
+      - name: 🚀 Start Redux Bank frontend
+        working-directory: app/frontend
+        run: |
+          npm run dev &
+          echo "Frontend started with PID: $!"
+
+      - name: ⏳ Wait for application to be ready
+        run: |
+          echo "🔍 Waiting for backend health check..."
+          timeout 60s bash -c 'until curl -f http://localhost:6007/api/health 2>/dev/null; do sleep 2; done' || {
+            echo "❌ Backend health check failed"
+            exit 1
+          }
+          
+          echo "🔍 Waiting for frontend to be ready..."  
+          timeout 60s bash -c 'until curl -f http://localhost:3000 2>/dev/null; do sleep 2; done' || {
+            echo "❌ Frontend health check failed"
+            exit 1
+          }
+          
+          echo "✅ Both services are ready!"
+
+      # ============================================================
+      # 🧪 TESTING EXECUTION: Playwright E2E Tests
+      # ============================================================
+      - name: 🧪 Execute Playwright E2E Tests
+        working-directory: testing
+        run: |
+          source .venv/bin/activate
+          
+          case "${{ github.event.inputs.test_suite || 'all' }}" in
+            "login")
+              echo "🔐 Running Login tests..."
+              pytest Tests/test_login.py -v --alluredir=allure-results --clean-alluredir
+              ;;
+            "registro")
+              echo "📝 Running Registration tests..."
+              pytest Tests/test_registro.py -v --alluredir=allure-results --clean-alluredir
+              ;;
+            "cuentas")
+              echo "🏦 Running Accounts tests..."
+              pytest Tests/test_cuentas.py -v --alluredir=allure-results --clean-alluredir
+              ;;
+            "navegacion")
+              echo "🧭 Running Navigation tests..."
+              pytest Tests/test_navegacion.py -v --alluredir=allure-results --clean-alluredir
+              ;;
+            "transferencias")
+              echo "💸 Running Transfers tests..."
+              pytest Tests/test_transferencias.py -v --alluredir=allure-results --clean-alluredir
+              ;;
+            *)
+              echo "🎯 Running ALL tests..."
+              pytest -v --alluredir=allure-results --clean-alluredir
+              ;;
+          esac
+        env:
+          PLAYWRIGHT_BROWSER: ${{ github.event.inputs.browser || 'chromium' }}
+
+      # ============================================================
+      # 📊 REPORTING: Allure Reports Generation
+      # ============================================================
+      - name: 📊 Install Allure CLI
+        if: always()
+        run: |
+          npm install -g allure-commandline --save-dev
+
+      - name: 📊 Generate Allure Report
+        if: always()
+        working-directory: testing
+        run: |
+          allure generate allure-results --clean -o allure-report
+          
+      - name: 📊 Add report metadata
+        if: always()
+        working-directory: testing
+        run: |
+          cat > allure-report/metadata.json << EOF
+          {
+            "execution_date": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "test_suite": "${{ github.event.inputs.test_suite || 'all' }}",
+            "browser": "${{ github.event.inputs.browser || 'chromium' }}",
+            "workflow_run": "${{ github.run_number }}",
+            "commit": "${{ github.sha }}",
+            "repository": "${{ github.repository }}"
+          }
+          EOF
+
+      # ============================================================
+      # 💾 ARTIFACTS: Upload test results and reports  
+      # ============================================================
+      - name: 💾 Upload Allure Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-${{ github.event.inputs.test_suite || 'all' }}-${{ github.run_number }}
+          path: testing/allure-results/
+          retention-days: 30
+
+      - name: 💾 Upload Allure Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report-${{ github.event.inputs.test_suite || 'all' }}-${{ github.run_number }}
+          path: testing/allure-report/
+          retention-days: 30
+
+      - name: 💾 Upload Screenshots on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-failure-${{ github.run_number }}
+          path: testing/screenshots/
+          retention-days: 7
+
+      - name: 💾 Upload Test Traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: traces-${{ github.run_number }}
+          path: testing/trace.zip
+          retention-days: 7
+
+  # ============================================================
+  # 🌐 GITHUB PAGES: Deploy Allure Reports
+  # ============================================================
+  deploy-report:
+    name: 🌐 Deploy Allure Report to GitHub Pages
+    needs: test
+    if: always() && needs.test.result != 'cancelled'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+      - name: 📥 Download Allure Report
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-report-${{ github.event.inputs.test_suite || 'all' }}-${{ github.run_number }}
+          path: ./report
+
+      - name: 🌐 Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: 🌐 Upload to Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./report
+
+      - name: 🌐 Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
