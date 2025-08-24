@@ -201,10 +201,10 @@ jobs:
       # ============================================================
       # 🧪 TESTING EXECUTION: Playwright E2E Tests
       # ============================================================
-      - name: 🧪 Execute Playwright E2E Tests
+      - name: 🧪 Execute Playwright E2E Tests 
         working-directory: testing
         run: |
-          source .venv/bin/activate
+          source .venv/bin/activate || true
           
           case "${{ github.event.inputs.test_suite || 'all' }}" in
             "login")
