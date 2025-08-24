@@ -185,13 +185,13 @@ jobs:
       - name: ⏳ Wait for application to be ready
         run: |
           echo "🔍 Waiting for backend health check..."
-          timeout 60s bash -c 'until curl -f http://localhost:6007/api/health 2>/dev/null; do sleep 2; done' || {
+          timeout 60s bash -c 'until curl -f http://localhost:6007 2>/dev/null; do sleep 2; done' || {
             echo "❌ Backend health check failed"
             exit 1
           }
           
           echo "🔍 Waiting for frontend to be ready..."  
-          timeout 60s bash -c 'until curl -f http://localhost:3000 2>/dev/null; do sleep 2; done' || {
+          timeout 60s bash -c 'until curl -f http://localhost:3000/login 2>/dev/null; do sleep 2; done' || {
             echo "❌ Frontend health check failed"
             exit 1
           }
