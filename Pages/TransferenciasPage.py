@@ -5,7 +5,7 @@ TransferenciasPage - Página para manejar envío de dinero entre usuarios
 from playwright.sync_api import Page
 import os
 from dotenv import load_dotenv
-from Funciones import Funcion
+from Utils.Funciones import Funcion
 
 load_dotenv()
 

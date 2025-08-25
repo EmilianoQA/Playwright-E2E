@@ -8,12 +8,11 @@ from Data.usuarios import usuarios  # ← Importar datos del archivo
 # PASO 1: ENTENDER CÓMO FUNCIONA DDT
 # ==========================================
 
-# ANTES - Test tradicional (1 caso hardcodeado)
+# Test tradicional (hardcodeado)
 def test_login_tradicional_ejemplo(page: Page):
     """Ejemplo: así era ANTES - solo 1 caso"""
     login_page = LoginPage(page)
     
-    # Datos fijos en el código
     email = "emilianomaure@gmail.com"
     password = "playwright"
     
@@ -23,26 +22,21 @@ def test_login_tradicional_ejemplo(page: Page):
     login_page.hacer_click_login()
     login_page.verificar_login_exitoso()
 
-
 # ==========================================
-# PASO 2: APLICAR DDT 
+# CON DDT 
 # ==========================================
 
-@pytest.mark.parametrize("usuario", usuarios)  # ← ESTA línea es la clave del DDT
+@pytest.mark.parametrize("usuario", usuarios)  
 @allure.feature("Autenticación")
 @allure.story("Login con Data-Driven Testing")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_login_ddt(page: Page, usuario):  # ← 'usuario' viene del parametrize
-    """
-    Test de login con DDT
-    - Se ejecuta automáticamente 4 veces
-    - Una vez por cada usuario en Data/usuarios.py
-    """
+
+def test_login_ddt(page: Page, usuario):  
     
     login_page = LoginPage(page)
     
     with allure.step(f"Ejecutando login para: {usuario['nombre']}"):
-        # Datos dinámicos que vienen del archivo
+        
         email = usuario["email"]
         password = usuario["password"]
         es_valido = usuario["valido"]
@@ -72,7 +66,7 @@ def test_login_ddt(page: Page, usuario):  # ← 'usuario' viene del parametrize
 
 
 # ==========================================
-# TESTS ESPECÍFICOS (Se mantienen sin DDT)
+# TESTS ESPECÍFICOS (Sin DDT)
 # ==========================================
 
 @allure.feature("Autenticación")

@@ -1,7 +1,7 @@
 from playwright.sync_api import Page, expect
 import os
 from dotenv import load_dotenv
-from Funciones import Funcion
+from Utils.Funciones import Funcion
 
 load_dotenv()
 

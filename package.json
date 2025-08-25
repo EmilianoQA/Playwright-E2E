@@ -18,7 +18,7 @@
     "test:navegacion": "source .venv/bin/activate && pytest Tests/test_navegacion.py -v -p allure_pytest --alluredir=allure-results --clean-alluredir",
     "test:transferencias": "source .venv/bin/activate && pytest Tests/test_transferencias.py -v -p allure_pytest --alluredir=allure-results --clean-alluredir",
   
-    "reporççt": "allure serve allure-results",
+    "report": "allure serve allure-results",
     "test:report": "npm run test:all && npm run report",
     "trace": "playwright show-trace trace.zip",
     "e2e:full": "npm run start:app && npm run wait-for-app && npm run test:all",

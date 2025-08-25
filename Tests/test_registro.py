@@ -2,7 +2,7 @@ import allure
 from playwright.sync_api import Page, expect
 from Pages.LoginPage import LoginPage
 from Pages.RegistroPage import RegistroPage
-from Funciones import Funcion
+from Utils.Funciones import Funcion
 import os
 import requests
 import time
