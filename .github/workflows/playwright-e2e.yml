@@ -161,10 +161,10 @@ jobs:
           API_BASE_URL=${{ secrets.API_BASE_URL }}
           MONGO_URI=${{ secrets.MONGO_URI }}
           JWT_SECRET=${{ secrets.JWT_SECRET }}
-          EMAIL_VALIDO=test@example.com
-          PASSWORD_VALIDO=password123
-          EMAIL_INCORRECTO=wrong@example.com
-          PASSWORD_INCORRECTO=wrongpass
+          EMAIL_VALIDO=emilianomaure@gmail.com
+          PASSWORD_VALIDO=playwright
+          EMAIL_INCORRECTO=usuario_incorrecto@gmail.com
+          PASSWORD_INCORRECTO=contraseña_incorrecta
           EOF
 
       # ============================================================

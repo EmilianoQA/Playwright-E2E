@@ -4,10 +4,6 @@ from playwright.sync_api import Page
 from Pages.LoginPage import LoginPage
 from Data.usuarios import usuarios  # ← Importar datos del archivo
 
-# ==========================================
-# PASO 1: ENTENDER CÓMO FUNCIONA DDT
-# ==========================================
-
 # Test tradicional (hardcodeado)
 def test_login_tradicional_ejemplo(page: Page):
     """Ejemplo: así era ANTES - solo 1 caso"""
@@ -22,10 +18,7 @@ def test_login_tradicional_ejemplo(page: Page):
     login_page.hacer_click_login()
     login_page.verificar_login_exitoso()
 
-# ==========================================
 # CON DDT 
-# ==========================================
-
 @pytest.mark.parametrize("usuario", usuarios)  
 @allure.feature("Autenticación")
 @allure.story("Login con Data-Driven Testing")
@@ -64,16 +57,13 @@ def test_login_ddt(page: Page, usuario):
             # Para usuarios inválidos (INVALIDO)
             login_page.verificar_mensaje_error()
 
-
-# ==========================================
 # TESTS ESPECÍFICOS (Sin DDT)
-# ==========================================
 
 @allure.feature("Autenticación")
 @allure.story("Validación de Campos Obligatorios")
 @allure.severity(allure.severity_level.NORMAL)
 def test_TC003_login_campos_vacios_no_redirige(page: Page):
-    """TC-003: Test específico - campos vacíos (sin DDT porque es caso único)"""
+    """TC-003: Test específico - campos vacíos (sin DDT)"""
     login_page = LoginPage(page)
     
     with allure.step("Navegar a la página de login"):
@@ -96,7 +86,7 @@ def test_TC003_login_campos_vacios_no_redirige(page: Page):
 @allure.story("Validación Nativa del Navegador")
 @allure.severity(allure.severity_level.NORMAL)
 def test_TC004_login_validacion_nativa_html5(page: Page):
-    """TC-004: Test específico - validación HTML5 (sin DDT porque es caso técnico único)"""
+    """TC-004: Test específico - validación HTML5 (sin DDT)"""
     login_page = LoginPage(page)
     
     with allure.step("Navegar a la página de login"):
@@ -136,22 +126,4 @@ def test_TC004_login_validacion_nativa_html5(page: Page):
         login_page.verificar_url_login()
 
 
-# ==========================================
-# RESUMEN DE LO QUE HACE ESTE ARCHIVO:
-# ==========================================
-"""
-EJECUCIÓN:
-1. test_login_ddt se ejecuta 4 veces automáticamente:
-   - test_login_ddt[VALIDO] → login exitoso
-   - test_login_ddt[INVALIDO] → login fallido  
-   - test_login_ddt[EMISOR] → login exitoso
-   - test_login_ddt[RECEPTOR] → login exitoso
 
-2. test_TC003_campos_vacios → 1 vez (test específico)
-
-3. test_TC004_validacion_html5 → 1 vez (test específico)
-
-TOTAL: 6 ejecuciones de tests (4 DDT + 2 específicos)
-
-En Allure aparecen como 6 tests separados con reportes individuales.
-"""
